@@ -20,7 +20,9 @@ export default function DashboardPage() {
   return (
     <div>
       {session ? (
-        <p>Logged in as {session.user.email}</p>
+        <p>
+          Logged in as name: {session.user.name} Email: {session.user.email}
+        </p>
       ) : (
         <p>Not logged in</p>
       )}
