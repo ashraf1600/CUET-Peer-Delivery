@@ -6,7 +6,9 @@ import { AxiosError } from "axios";
 import { post } from "./api/handlers";
 
 type LoginResponse = {
-  token: string;
+  accessToken: string;
+  refreshToken: string;
+
   user: {
     _id: string;
     stdId: string;
@@ -42,13 +44,14 @@ const authOptions: NextAuthOptions = {
           );
           console.log("API Response:", response);
 
-          if (response.token) {
+          if (response.accessToken) {
             // Return an object that matches your User interface
             return {
               id: response.user._id,
               email: response.user.email,
               name: response.user.name,
-              token: response.token,
+              accessToken: response.accessToken,
+              refreshToken: response.refreshToken,
               user: response.user,
             };
           }
@@ -70,9 +73,36 @@ const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.email = user.email;
         token.name = user.name;
-        token.token = (user as any).token;
-        token.user = (user as any).user;
+        token.accessToken = user.accessToken;
+        token.refreshToken = user.refreshToken;
+        token.user = user.user;
+        token.accessTokenExpires = Math.floor(Date.now() / 1000) + 60;
       }
+      // Check if the current time is past the access token's expiry time
+      const now = Math.floor(Date.now() / 1000);
+      if (token.accessTokenExpires && now > token.accessTokenExpires) {
+        try {
+          // Attempt to refresh the access token
+          const response = await post<{ accessToken: string }>(
+            "/api/auth/refresh-token",
+            {
+              refreshToken: token.refreshToken,
+            },
+            {
+              "Content-Type": "application/json",
+            },
+          );
+
+          // Update the token with the new access token
+          token.accessToken = response.accessToken;
+          token.accessTokenExpires = now + 60; // Set new expiry time (1 minute from now)
+        } catch (error) {
+          console.error("Error refreshing access token", error);
+          // Handle refresh token error (e.g., redirect to login)
+          return { ...token, error: "RefreshAccessTokenError" };
+        }
+      }
+
       return token;
     },
     session: ({ session, token }) => {
@@ -83,10 +113,17 @@ const authOptions: NextAuthOptions = {
           email: token.email,
           name: token.name,
         };
-        (session as any).token = token.token;
+        (session as any).accessToken = token.accessToken;
         (session as any).user = token.user;
       }
       return session;
+    },
+    redirect: async ({ url, baseUrl }) => {
+      // Redirect to login page if there's an error with the refresh token
+      if (url === baseUrl) {
+        return `${process.env.NEXT_PUBLIC_BASE_URL}/login`;
+      }
+      return url;
     },
     // authorized: async ({ auth }) => {
     //   return !!auth;
