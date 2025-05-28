@@ -148,7 +148,7 @@ const Navbar = () => {
 
             <div className="hidden items-center lg:flex">
               <Link
-                href="/login"
+                href="/auth/login"
                 className="px-4 py-3 text-sm leading-5 font-medium text-black transition-colors hover:bg-gray-50"
               >
                 Login
