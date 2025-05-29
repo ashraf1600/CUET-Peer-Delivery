@@ -153,9 +153,9 @@ const Navbar = () => {
               >
                 Login
               </Link>
-              <Link href="/new-member">
-                <Button className="bg-Primary-500 text-baseWhite">
-                  New Member
+              <Link href="/auth/register">
+                <Button className="bg-Primary-500 text-baseWhite cursor-pointer">
+                  Register
                 </Button>
               </Link>
             </div>

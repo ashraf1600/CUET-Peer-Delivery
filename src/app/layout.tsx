@@ -13,8 +13,8 @@ import AuthProvider from "./provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Js Green Media Ltd",
-  description: "JS Green Media Ltd. Sustainable Landscapes & Green Solutions",
+  title: "title",
+  description: "description",
 };
 
 export default async function RootLayout({
@@ -27,7 +27,7 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <title>Js Green Media Ltd</title>
+        <title>E Delivery Client</title>
       </head>
       <body className={inter.className}>
         <AuthProvider>

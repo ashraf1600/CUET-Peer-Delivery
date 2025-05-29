@@ -36,8 +36,10 @@ import { getToken } from "next-auth/jwt";
 export async function middleware(request: NextRequest) {
   const token = await getToken({ req: request });
 
+  const publicRoutes = ["/auth/login", "/auth/register"];
+
   // Check if the user is trying to access a protected route
-  if (!token && !request.nextUrl.pathname.startsWith("/auth/login")) {
+  if (!token && !publicRoutes.includes(request.nextUrl.pathname)) {
     // Redirect to login page if there is no token
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }

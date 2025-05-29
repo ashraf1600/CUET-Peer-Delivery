@@ -1,4 +1,4 @@
-// app/login/page.tsx
+// app/register/component/Register.tsx
 "use client";
 
 import { useState } from "react";
@@ -15,43 +15,20 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
+import { post } from "@/lib/api/handlers";
 import Link from "next/link";
 
-export default function LoginPage() {
+export default function Register() {
+  const [stdId, setStdId] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [hallName, setHallName] = useState("");
   const [password, setPassword] = useState("");
+  const [description, setDescription] = useState("");
+  const [role, setRole] = useState("student");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-
-  console.log("email", email);
-  console.log("password", password);
-  console.log("error", error);
-
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   setIsLoading(true);
-  //   setError("");
-
-  //   try {
-  //     const result = await signIn("credentials", {
-  //       email,
-  //       password,
-  //       redirect: false,
-  //     });
-  //     console.log("SignIn result:", result);
-
-  //     if (result?.error) {
-  //       setError(result.error);
-  //     } else {
-  //       router.push("/dashboard");
-  //     }
-  //   } catch (err) {
-  //     setError("An unexpected error occurred");
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,24 +36,37 @@ export default function LoginPage() {
     setError("");
 
     try {
+      const response = await post("/api/auth/register", {
+        stdId,
+        name,
+        email,
+        hallName,
+        password,
+        description,
+        role,
+      });
+
+      if (!response) {
+        throw new Error("Registration failed");
+      }
+
+      // Automatically sign in the user after registration
       const result = await signIn("credentials", {
         email,
         password,
-        redirect: false, // Keep this to handle errors manually
+        redirect: false,
       });
-
-      console.log("SignIn result:", result); // Debug log
 
       if (result?.error) {
         setError(result.error);
-      } else if (result?.ok) {
-        router.push("/");
       } else {
-        setError("Authentication failed");
+        router.push("/");
       }
     } catch (err) {
-      console.error("SignIn error:", err);
-      setError("An unexpected error occurred");
+      console.error("Registration error:", err);
+      setError(
+        err instanceof Error ? err.message : "An unexpected error occurred",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -85,10 +75,10 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
-          <CardDescription>
-            Enter your email and password to login
-          </CardDescription>
+          <CardTitle className="text-2xl font-bold">
+            Create an account
+          </CardTitle>
+          <CardDescription>Enter your details to register</CardDescription>
         </CardHeader>
 
         <form onSubmit={handleSubmit}>
@@ -98,6 +88,30 @@ export default function LoginPage() {
                 {error}
               </div>
             )}
+
+            <div className="space-y-2">
+              <Label htmlFor="stdId">Student ID</Label>
+              <Input
+                id="stdId"
+                type="text"
+                placeholder="11204042"
+                value={stdId}
+                onChange={(e) => setStdId(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="Your Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
 
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -112,6 +126,18 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-2">
+              <Label htmlFor="hallName">Hall Name</Label>
+              <Input
+                id="hallName"
+                type="text"
+                placeholder="HQ 404"
+                value={hallName}
+                onChange={(e) => setHallName(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
@@ -120,6 +146,30 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
+              <Input
+                id="description"
+                type="text"
+                placeholder="A student at the university"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="role">Role</Label>
+              <select
+                id="role"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                className="w-full rounded border p-2"
+              >
+                <option value="student">Student</option>
+                <option value="teacher">Teacher</option>
+              </select>
             </div>
           </CardContent>
 
@@ -147,20 +197,20 @@ export default function LoginPage() {
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     ></path>
                   </svg>
-                  Signing in...
+                  Registering...
                 </span>
               ) : (
-                "Sign In"
+                "Register"
               )}
             </Button>
 
             <div className="mt-4 text-center text-sm">
-              Dont have an account?{" "}
+              Already have an account?{" "}
               <Link
-                href="/auth/register"
+                href="/auth/login"
                 className="text-primary hover:text-primary/80 underline"
               >
-                Sign up
+                Sign in
               </Link>
             </div>
           </CardFooter>
