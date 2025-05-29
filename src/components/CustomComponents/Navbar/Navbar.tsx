@@ -15,10 +15,12 @@ import {
 import { Container } from "@/components/shared/Container";
 import { useLanguageStore } from "@/components/shared/languageStore";
 import MobileMenu from "./MobileMenu";
+import { signOut, useSession } from "next-auth/react";
 // import MobileMenu from "./MobileMenu";
 export type Language = "en" | "bn";
 
 const Navbar = () => {
+  const { data: session } = useSession();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAuthenticated] = useState(false);
   const [openPopoverId, setOpenPopoverId] = useState<string | null>(null);
@@ -146,18 +148,35 @@ const Navbar = () => {
 
             {/* Auth and Language Section */}
 
+            {/* Auth and Language Section */}
             <div className="hidden items-center lg:flex">
-              <Link
-                href="/auth/login"
-                className="px-4 py-3 text-sm leading-5 font-medium text-black transition-colors hover:bg-gray-50"
-              >
-                Login
-              </Link>
-              <Link href="/auth/register">
-                <Button className="bg-Primary-500 text-baseWhite cursor-pointer">
-                  Register
-                </Button>
-              </Link>
+              {!session ? (
+                <>
+                  <Link
+                    href="/auth/login"
+                    className="px-4 py-3 text-sm leading-5 font-medium text-black transition-colors hover:bg-gray-50"
+                  >
+                    Login
+                  </Link>
+                  <Link href="/auth/register">
+                    <Button className="bg-Primary-500 text-baseWhite cursor-pointer">
+                      Register
+                    </Button>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <span className="px-4 py-3 text-sm leading-5 font-medium text-black">
+                    Welcome, {session.user?.name}
+                  </span>
+                  <Button
+                    onClick={() => signOut({ redirect: true })}
+                    className="bg-Primary-500 text-baseWhite cursor-pointer"
+                  >
+                    Logout
+                  </Button>
+                </>
+              )}
             </div>
           </div>
 
