@@ -1,4 +1,3 @@
-"use client";
 import { Button } from "@/components/ui/button";
 import { FaChevronDown, FaRegStar, FaUserCircle } from "react-icons/fa";
 import Link from "next/link";
@@ -16,13 +15,19 @@ import { Container } from "@/components/shared/Container";
 import { useLanguageStore } from "@/components/shared/languageStore";
 import MobileMenu from "./MobileMenu";
 import { signOut, useSession } from "next-auth/react";
-// import MobileMenu from "./MobileMenu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 export type Language = "en" | "bn";
 
 const Navbar = () => {
   const { data: session } = useSession();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isAuthenticated] = useState(false);
   const [openPopoverId, setOpenPopoverId] = useState<string | null>(null);
   const [isLanguagePopoverOpen, setIsLanguagePopoverOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
@@ -40,7 +45,6 @@ const Navbar = () => {
   };
 
   const getLabel = (key: string, fallback: string) => {
-    // return isClient ? (key) : fallback;
     return isClient ? t(key) : fallback;
   };
 
@@ -54,7 +58,6 @@ const Navbar = () => {
       fallback: "Home",
       simpleLink: true,
     },
-
     {
       id: "2",
       label: "navItems.3",
@@ -73,6 +76,15 @@ const Navbar = () => {
       ],
     },
   ];
+
+  const getInitials = (name: string) => {
+    const names = name.split(" ");
+    let initials = names[0].substring(0, 1).toUpperCase();
+    if (names.length > 1) {
+      initials += names[names.length - 1].substring(0, 1).toUpperCase();
+    }
+    return initials;
+  };
 
   return (
     <div className="relative">
@@ -147,8 +159,6 @@ const Navbar = () => {
             </nav>
 
             {/* Auth and Language Section */}
-
-            {/* Auth and Language Section */}
             <div className="hidden items-center lg:flex">
               {!session ? (
                 <>
@@ -166,50 +176,79 @@ const Navbar = () => {
                 </>
               ) : (
                 <>
-                  <span className="px-4 py-3 text-sm leading-5 font-medium text-black">
-                    Welcome, {session.user?.name}
-                  </span>
-                  <Button
-                    onClick={() => signOut({ redirect: true })}
-                    className="bg-Primary-500 text-baseWhite cursor-pointer"
-                  >
-                    Logout
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="cursor-pointer">
+                      <Avatar>
+                        <AvatarImage />
+                        <AvatarFallback>
+                          {getInitials(session?.user?.name || "User")}
+                        </AvatarFallback>
+                      </Avatar>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem
+                        className="cursor-pointer"
+                        onClick={() => router.push("/profile")}
+                      >
+                        Profile
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => router.push("/my-posts")}
+                        className="cursor-pointer"
+                      >
+                        My Posts
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => router.push("/my-orders")}
+                        className="cursor-pointer"
+                      >
+                        My Orders
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => router.push("/settings")}
+                        className="cursor-pointer"
+                      >
+                        Settings
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => signOut({ redirect: true })}
+                        className="cursor-pointer"
+                      >
+                        Logout
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </>
               )}
             </div>
-          </div>
 
-          {/* Mobile Menu Button */}
-          <div className="relative">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="lg:hidden"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              <RiMenu4Fill size={24} className="text-colors-navbarText" />
-            </Button>
+            {/* Mobile Menu Button */}
+            <div className="relative">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="lg:hidden"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              >
+                <RiMenu4Fill size={24} className="text-colors-navbarText" />
+              </Button>
 
-            {/* Mobile Navigation Menu */}
-            {isMobileMenuOpen && (
-              <MobileMenu
-                isOpen={isMobileMenuOpen}
-                onClose={() => setIsMobileMenuOpen(false)}
-                navItems={navItems}
-                isClient={isClient}
-                getLabel={getLabel}
-                isActiveLink={isActiveLink}
-                language={language}
-                setLanguage={(lang) => setLanguage(lang as Language)}
-                isLanguagePopoverOpen={isLanguagePopoverOpen}
-                setIsLanguagePopoverOpen={setIsLanguagePopoverOpen}
-              />
-              //               <MobileMenu
-              //  isOpen={isMobileMenuOpen}
-              //  onClose={() => setIsMobileMenuOpen(false)}
-              // />
-            )}
+              {/* Mobile Navigation Menu */}
+              {isMobileMenuOpen && (
+                <MobileMenu
+                  isOpen={isMobileMenuOpen}
+                  onClose={() => setIsMobileMenuOpen(false)}
+                  navItems={navItems}
+                  isClient={isClient}
+                  getLabel={getLabel}
+                  isActiveLink={isActiveLink}
+                  language={language}
+                  setLanguage={(lang) => setLanguage(lang as Language)}
+                  isLanguagePopoverOpen={isLanguagePopoverOpen}
+                  setIsLanguagePopoverOpen={setIsLanguagePopoverOpen}
+                />
+              )}
+            </div>
           </div>
         </div>
       </Container>
