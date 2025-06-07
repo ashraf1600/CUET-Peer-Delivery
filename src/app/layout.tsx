@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
-import { SessionProvider } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
 import ReactQueryProvider from "@/providers/QueryClientProvider";
 import LayoutProvider from "@/providers/LayoutProvider";
