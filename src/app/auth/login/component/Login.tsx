@@ -24,35 +24,6 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  console.log("email", email);
-  console.log("password", password);
-  console.log("error", error);
-
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   setIsLoading(true);
-  //   setError("");
-
-  //   try {
-  //     const result = await signIn("credentials", {
-  //       email,
-  //       password,
-  //       redirect: false,
-  //     });
-  //     console.log("SignIn result:", result);
-
-  //     if (result?.error) {
-  //       setError(result.error);
-  //     } else {
-  //       router.push("/dashboard");
-  //     }
-  //   } catch (err) {
-  //     setError("An unexpected error occurred");
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -62,17 +33,14 @@ export default function LoginPage() {
       const result = await signIn("credentials", {
         email,
         password,
-        redirect: false, // Keep this to handle errors manually
+        // redirect: false,
+        callbackUrl: "/",
       });
 
-      console.log("SignIn result:", result); // Debug log
+      console.log("SignIn result:", result);
 
       if (result?.error) {
         setError(result.error);
-      } else if (result?.ok) {
-        router.push("/");
-      } else {
-        setError("Authentication failed");
       }
     } catch (err) {
       console.error("SignIn error:", err);

@@ -29,8 +29,9 @@ const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       authorize: async (credentials) => {
-        if (credentials === null) throw new Error("Missing credentials");
-
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Missing credentials");
+        }
         try {
           const response = await post<LoginResponse>(
             "/api/auth/login",
@@ -118,12 +119,17 @@ const authOptions: NextAuthOptions = {
       }
       return session;
     },
+    // redirect: async ({ url, baseUrl }) => {
+    //   // Redirect to login page if there's an error with the refresh token
+    //   if (url === baseUrl) {
+    //     return `${process.env.NEXT_PUBLIC_BASE_URL}/login`;
+    //   }
+    //   return url;
+    // },
     redirect: async ({ url, baseUrl }) => {
-      // Redirect to login page if there's an error with the refresh token
-      if (url === baseUrl) {
-        return `${process.env.NEXT_PUBLIC_BASE_URL}/login`;
-      }
-      return url;
+      console.log(url, baseUrl, "In redirect");
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      return baseUrl;
     },
     // authorized: async ({ auth }) => {
     //   return !!auth;
@@ -145,4 +151,4 @@ const authOptions: NextAuthOptions = {
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST, authOptions };
-export const auth = handler.auth;
+// export const auth = handler.auth;
