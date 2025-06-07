@@ -1,17 +1,10 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import React, { useState } from "react";
+
 import Link from "next/link";
 import Image from "next/image";
-import { FaChevronDown, FaMoneyBillTrendUp } from "react-icons/fa6";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-// import { useLanguageStore } from "@/store/languageStore";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -28,26 +21,14 @@ interface MobileMenuProps {
     }[];
   }[];
   isClient: boolean;
-  getLabel: (key: string, fallback: string) => string;
   isActiveLink: (href: string) => boolean;
-  language: string;
-  setLanguage: (lang: string) => void;
-  //   setLanguage: (language: Language) => void;
-  isLanguagePopoverOpen: boolean;
-  setIsLanguagePopoverOpen: (open: boolean) => void;
 }
 
 const MobileMenu: React.FC<MobileMenuProps> = ({
   isOpen,
   onClose,
   navItems,
-  isClient,
-  getLabel,
   isActiveLink,
-  language,
-  setLanguage,
-  isLanguagePopoverOpen,
-  setIsLanguagePopoverOpen,
 }) => {
   const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>(
     {},
@@ -111,7 +92,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                       isActiveLink(item.href) ? "font-medium" : ""
                     }`}
                   >
-                    {getLabel(item.label, item.fallback)}
+                    {(item.label, item.fallback)}
                   </Link>
                 );
               }
@@ -122,7 +103,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                     onClick={() => toggleDropdown(item.id)}
                     className="flex w-full items-center justify-between py-2"
                   >
-                    <span>{getLabel(item.label, item.fallback)}</span>
+                    <span>{(item.label, item.fallback)}</span>
                     <svg
                       className={`h-4 w-4 transition-transform ${
                         openDropdowns[item.id] ? "rotate-180" : ""
@@ -148,65 +129,12 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                         onClick={handleLinkClick}
                         className="block py-2 pl-4"
                       >
-                        {getLabel(subItem.label, subItem.fallback)}
+                        {(subItem.label, subItem.fallback)}
                       </Link>
                     ))}
                 </div>
               );
             })}
-          </div>
-        </div>
-
-        {/* Footer with language selector */}
-        <div className="p-4">
-          <div className="flex items-center justify-between">
-            <Link
-              href="/donate"
-              onClick={handleLinkClick}
-              className="flex items-center gap-2"
-            >
-              <FaMoneyBillTrendUp size={20} />
-              {/* {getLabel("donate", "Donate")} */}
-            </Link>
-
-            <Popover
-              open={isLanguagePopoverOpen}
-              onOpenChange={setIsLanguagePopoverOpen}
-            >
-              <PopoverTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="border-lightGray flex items-center gap-2 border px-3 py-2"
-                >
-                  {language === "en" ? "English" : "বাংলা"}
-                  <FaChevronDown size={24} />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="z-[1001] w-32 bg-white">
-                <div className="space-y-2">
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start"
-                    onClick={() => {
-                      setLanguage("en");
-                      setIsLanguagePopoverOpen(false);
-                    }}
-                  >
-                    English
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start"
-                    onClick={() => {
-                      setLanguage("bn");
-                      setIsLanguagePopoverOpen(false);
-                    }}
-                  >
-                    বাংলা
-                  </Button>
-                </div>
-              </PopoverContent>
-            </Popover>
           </div>
         </div>
       </div>
