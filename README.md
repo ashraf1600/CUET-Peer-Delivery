@@ -23,9 +23,13 @@ A simple project setup with Next.js.
    cd [project-directory]
    ```
 3. Create a .env file in the root directory and add:
+
    ```bash
    NEXT_PUBLIC_BASE_URL=http://localhost:5000
+   NODE_ENVL=development
+   NEXTAUTH_SECRET=add_your_own
    ```
+
 4. make env file and add
    ```bash
    npm install
