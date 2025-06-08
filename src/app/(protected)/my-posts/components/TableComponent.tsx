@@ -68,19 +68,19 @@ const TableComponent: React.FC<TableComponentProps> = ({
         <div className="flex space-x-2">
           <button
             onClick={() => onView(row.original)}
-            className="text-blue-500 hover:text-blue-700"
+            className="cursor-pointer text-blue-500 hover:text-blue-700"
           >
             <FaEye />
           </button>
           <button
             onClick={() => onEdit(row.original)}
-            className="text-green-500 hover:text-green-700"
+            className="cursor-pointer text-green-500 hover:text-green-700"
           >
             <FaEdit />
           </button>
           <button
             onClick={() => onDelete(row.original._id)}
-            className="text-red-500 hover:text-red-700"
+            className="cursor-pointer text-red-500 hover:text-red-700"
           >
             <FaTrash />
           </button>
