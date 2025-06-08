@@ -1,7 +1,13 @@
+import { Container } from "@/components/shared/Container";
 import React from "react";
+import MyDetails from "./MyDetails";
 
 const page = () => {
-  return <div>Own profile details</div>;
+  return (
+    <Container>
+      <MyDetails />
+    </Container>
+  );
 };
 
 export default page;
