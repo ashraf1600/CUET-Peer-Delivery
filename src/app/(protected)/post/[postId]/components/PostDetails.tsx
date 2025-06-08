@@ -107,7 +107,7 @@ const PostDetails: React.FC<PostDetailsProps> = ({ postId, accessToken }) => {
             </span>
           </p>
           <Button
-            onClick={() => handleStatusUpdate("Requested")}
+            onClick={() => handleStatusUpdate("Accepted")}
             disabled={requestSent}
             className="mt-4 cursor-pointer rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-500"
           >
