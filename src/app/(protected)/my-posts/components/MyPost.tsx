@@ -1,7 +1,7 @@
 "use client";
 
 import { Check } from "lucide-react";
-import { del, get } from "@/lib/api/handlers";
+import { del, get, put } from "@/lib/api/handlers";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import React, { useState } from "react";
@@ -13,6 +13,16 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface UserId {
   _id: string;
@@ -37,7 +47,13 @@ const MyPost = () => {
   const queryClient = useQueryClient();
   const [selectedPost, setSelectedPost] = useState<Task | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editFormData, setEditFormData] = useState({
+    title: "",
+    description: "",
+    status: "",
+  });
+  // get all own posts
   const getOwnPosts = async () => {
     const response = await get<Task[]>(`/api/posts/own/posts`, {
       Authorization: `Bearer ${session?.accessToken}`,
@@ -50,6 +66,39 @@ const MyPost = () => {
     return response;
   };
 
+  // update post
+  const updatePost = async (postId: string, updatedData: Partial<Task>) => {
+    const response = await put(`/api/posts/${postId}`, updatedData, {
+      Authorization: `Bearer ${session?.accessToken}`,
+    });
+
+    if (!response) {
+      throw new Error("Failed to update post");
+    }
+
+    return response;
+  };
+
+  const { mutate: mutateUpdate } = useMutation({
+    mutationFn: ({
+      postId,
+      updatedData,
+    }: {
+      postId: string;
+      updatedData: Partial<Task>;
+    }) => updatePost(postId, updatedData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["own-posts"] });
+      queryClient.invalidateQueries({ queryKey: ["post", selectedPost?._id] });
+      toast.success("Post updated successfully!");
+      setIsEditDialogOpen(false);
+    },
+    onError: (error) => {
+      toast.error(`Error: ${error.message}`);
+    },
+  });
+
+  //get post by id
   const getPostById = async (postId: string): Promise<Task> => {
     const response = await get<Task>(`/api/posts/${postId}`, {
       Authorization: `Bearer ${session?.accessToken}`,
@@ -61,7 +110,7 @@ const MyPost = () => {
 
     return response;
   };
-
+  //delete method
   const deletePost = async (id: string) => {
     const response = await del(`/api/posts/${id}`, {
       Authorization: `Bearer ${session?.accessToken}`,
@@ -128,8 +177,19 @@ const MyPost = () => {
   };
 
   const handleEdit = (task: Task) => {
-    console.log("Edit task:", task);
-    // Implement edit logic here
+    setSelectedPost(task);
+    setEditFormData({
+      title: task.title,
+      description: task.description,
+      status: task.status,
+    });
+    setIsEditDialogOpen(true);
+  };
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (selectedPost) {
+      mutateUpdate({ postId: selectedPost._id, updatedData: editFormData });
+    }
   };
 
   const handleDelete = (id: string) => {
@@ -213,6 +273,69 @@ const MyPost = () => {
           )}
         </SheetContent>
       </Sheet>
+
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Post</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleEditSubmit}>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="title" className="text-right">
+                  Title
+                </Label>
+                <Input
+                  id="title"
+                  value={editFormData.title}
+                  onChange={(e) =>
+                    setEditFormData({ ...editFormData, title: e.target.value })
+                  }
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="description" className="text-right">
+                  Description
+                </Label>
+                <Input
+                  id="description"
+                  value={editFormData.description}
+                  onChange={(e) =>
+                    setEditFormData({
+                      ...editFormData,
+                      description: e.target.value,
+                    })
+                  }
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="status" className="text-right">
+                  Status
+                </Label>
+                <select
+                  id="status"
+                  value={editFormData.status}
+                  onChange={(e) =>
+                    setEditFormData({ ...editFormData, status: e.target.value })
+                  }
+                  className="col-span-3 rounded border p-2"
+                >
+                  {statusOrder.map((status) => (
+                    <option key={status} value={status}>
+                      {status}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="submit">Save changes</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
