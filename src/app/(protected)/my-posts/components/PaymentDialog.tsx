@@ -48,6 +48,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
   const queryClient = useQueryClient();
   const [paymentMethod, setPaymentMethod] = useState("");
   const [amount, setAmount] = useState("");
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
 
   const updatePostStatus = async () => {
     const response = await put(
@@ -115,21 +116,61 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="paymentMethod" className="text-right">
-                Payment Method
-              </Label>
-              <select
-                id="paymentMethod"
-                value={paymentMethod}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-                className="col-span-3 rounded border p-2"
-              >
-                <option value="">Select a method</option>
-                <option value="bkash">bKash</option>
-                <option value="nagad">Nagad</option>
-                <option value="rocket">Rocket</option>
-              </select>
+            <div className="flex justify-around">
+              <div className="flex items-center">
+                <input
+                  type="radio"
+                  id="bkash"
+                  name="paymentMethod"
+                  value="bkash"
+                  checked={selectedPaymentMethod === "bkash"}
+                  onChange={(e) => setSelectedPaymentMethod(e.target.value)}
+                  className="mr-2"
+                />
+                <Label htmlFor="bkash">
+                  <img
+                    src="/images/bkash.webp"
+                    alt="bKash"
+                    className="h-16 w-auto"
+                  />
+                </Label>
+              </div>
+              <div className="flex items-center">
+                <input
+                  type="radio"
+                  id="nagad"
+                  name="paymentMethod"
+                  value="nagad"
+                  checked={selectedPaymentMethod === "nagad"}
+                  onChange={(e) => setSelectedPaymentMethod(e.target.value)}
+                  className="mr-2"
+                />
+                <Label htmlFor="nagad">
+                  <img
+                    src="/images/nagad.jpg"
+                    alt="Nagad"
+                    className="h-16 w-auto"
+                  />
+                </Label>
+              </div>
+              <div className="flex items-center">
+                <input
+                  type="radio"
+                  id="rocket"
+                  name="paymentMethod"
+                  value="rocket"
+                  checked={selectedPaymentMethod === "rocket"}
+                  onChange={(e) => setSelectedPaymentMethod(e.target.value)}
+                  className="mr-2"
+                />
+                <Label htmlFor="rocket">
+                  <img
+                    src="/images/rocket.png"
+                    alt="Rocket"
+                    className="h-16 w-auto"
+                  />
+                </Label>
+              </div>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="amount" className="text-right">
@@ -152,5 +193,4 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
     </Dialog>
   );
 };
-
 export default PaymentDialog;

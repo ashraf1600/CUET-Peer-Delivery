@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-table";
 import { FaEye, FaEdit, FaTrash, FaMoneyBillWave } from "react-icons/fa";
 import PaymentDialog from "./PaymentDialog";
+import { Button } from "@/components/ui/button";
 
 interface UserId {
   _id: string;
@@ -73,12 +74,12 @@ const TableComponent: React.FC<TableComponentProps> = ({
       id: "payment",
       header: "Payment",
       cell: ({ row }) => (
-        <button
+        <Button
           onClick={() => handlePaymentClick(row.original._id)}
-          className="cursor-pointer text-purple-500 hover:text-purple-700"
+          className="cursor-pointer bg-blue-500 text-white hover:bg-blue-600"
         >
-          <FaMoneyBillWave />
-        </button>
+          Pay
+        </Button>
       ),
     },
     {
