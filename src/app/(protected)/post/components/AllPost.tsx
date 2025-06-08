@@ -4,6 +4,7 @@ import React from "react";
 import { get } from "@/lib/api/handlers";
 import { useQuery } from "@tanstack/react-query";
 import PostCard from "./PostCard";
+import Link from "next/link";
 
 interface UserId {
   _id: string;
@@ -11,7 +12,7 @@ interface UserId {
   email: string;
 }
 
-interface Task {
+interface PostDataType {
   _id: string;
   userId: UserId;
   title: string;
@@ -24,8 +25,8 @@ interface Task {
 }
 
 const AllPost = () => {
-  const GetAllPost = async (): Promise<Task[]> => {
-    const response = await get<Task[]>(`/api/posts`);
+  const GetAllPost = async (): Promise<PostDataType[]> => {
+    const response = await get<PostDataType[]>(`/api/posts`);
 
     if (!response) {
       throw new Error("Failed to fetch posts");
@@ -38,7 +39,7 @@ const AllPost = () => {
     data: posts,
     isLoading,
     error,
-  } = useQuery<Task[]>({
+  } = useQuery<PostDataType[]>({
     queryKey: ["posts"],
     queryFn: GetAllPost,
   });
@@ -51,7 +52,13 @@ const AllPost = () => {
     <div className="py-10">
       <h1 className="mb-4 text-2xl font-bold">All Posts</h1>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {posts?.map((post) => <PostCard key={post._id} post={post} />)}
+        {posts?.map((post) => (
+          <Link key={post._id} href={`/post/${post._id}`} passHref>
+            <div className="cursor-pointer">
+              <PostCard post={post} />
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
   );
