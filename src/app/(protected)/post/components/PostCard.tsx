@@ -56,7 +56,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
   };
 
   return (
-    <div className="m-4 h-96 w-96 overflow-hidden rounded-xl bg-white shadow-md">
+    <div className="m-4 h-96 w-96 overflow-hidden rounded-xl bg-gray-100 shadow-md">
       <div className="flex h-full flex-col p-6">
         <div className="text-sm font-semibold tracking-wide text-indigo-500 uppercase">
           {post?.status}

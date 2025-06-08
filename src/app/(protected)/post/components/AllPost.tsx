@@ -50,7 +50,9 @@ const AllPost = () => {
   console.log("all post", posts);
   return (
     <div className="py-10">
-      <h1 className="mb-4 text-2xl font-bold">All Posts</h1>
+      <span className="mb-4 flex items-center justify-center text-2xl font-bold">
+        All Posts
+      </span>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {posts?.map((post) => (
           <Link key={post._id} href={`/post/${post._id}`} passHref>

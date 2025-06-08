@@ -68,7 +68,7 @@ const Navbar = () => {
     <div className="sticky top-0 z-50 w-full bg-gray-100 shadow-sm">
       <Container className="pt-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center">
+          <div className="flex items-center gap-2">
             <Link href="/" className="flex items-center">
               <Image
                 src="https://img.freepik.com/free-vector/bird-colorful-gradient-design-vector_343694-2506.jpg?semt=ais_hybrid&w=740"
@@ -78,6 +78,10 @@ const Navbar = () => {
                 unoptimized
               />
             </Link>
+            <span className="font-bold text-blue-500">
+              <span className="text-amber-700">CUET</span>{" "}
+              <span className="text-blue-500">Peer Delivery</span>
+            </span>
           </div>
 
           {/* Desktop Navigation */}
@@ -86,10 +90,8 @@ const Navbar = () => {
               <Link
                 key={item.id}
                 href={item.href!}
-                className={`hover:text-Primary-300 mx-4 text-sm leading-5 font-medium transition-colors ${
-                  isActiveLink(item.href!)
-                    ? "text-Primary-300"
-                    : "text-colors-navbarText"
+                className={`hover:text-Primary-300 text-md mx-4 leading-5 font-medium text-blue-500 transition-colors ${
+                  isActiveLink(item.href!) ? "text-black" : "text-black"
                 }`}
               >
                 {item.fallback}
