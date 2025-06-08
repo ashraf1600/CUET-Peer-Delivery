@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   useReactTable,
   getCoreRowModel,
   flexRender,
   ColumnDef,
 } from "@tanstack/react-table";
-import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
+import { FaEye, FaEdit, FaTrash, FaMoneyBillWave } from "react-icons/fa";
+import PaymentDialog from "./PaymentDialog";
 
 interface UserId {
   _id: string;
@@ -38,6 +39,13 @@ const TableComponent: React.FC<TableComponentProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
+  const [selectedPostId, setSelectedPostId] = useState("");
+
+  const handlePaymentClick = (postId: string) => {
+    setSelectedPostId(postId);
+    setIsPaymentDialogOpen(true);
+  };
   const columns: ColumnDef<Task>[] = [
     {
       accessorKey: "_id",
@@ -60,6 +68,18 @@ const TableComponent: React.FC<TableComponentProps> = ({
       accessorKey: "createdAt",
       header: "Created At",
       cell: (info) => new Date(info.getValue() as string).toLocaleString(),
+    },
+    {
+      id: "payment",
+      header: "Payment",
+      cell: ({ row }) => (
+        <button
+          onClick={() => handlePaymentClick(row.original._id)}
+          className="cursor-pointer text-purple-500 hover:text-purple-700"
+        >
+          <FaMoneyBillWave />
+        </button>
+      ),
     },
     {
       id: "actions",
@@ -127,6 +147,11 @@ const TableComponent: React.FC<TableComponentProps> = ({
           ))}
         </tbody>
       </table>
+      <PaymentDialog
+        isOpen={isPaymentDialogOpen}
+        onOpenChange={setIsPaymentDialogOpen}
+        postId={selectedPostId}
+      />
     </div>
   );
 };

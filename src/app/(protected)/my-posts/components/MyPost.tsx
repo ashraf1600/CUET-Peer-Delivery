@@ -53,6 +53,8 @@ const MyPost = () => {
     description: "",
     status: "",
   });
+  const [ownPosts, setOwnPosts] = useState<Task[]>([]);
+
   // get all own posts
   const getOwnPosts = async () => {
     const response = await get<Task[]>(`/api/posts/own/posts`, {
@@ -87,14 +89,40 @@ const MyPost = () => {
       postId: string;
       updatedData: Partial<Task>;
     }) => updatePost(postId, updatedData),
+    onMutate: async (newPostData) => {
+      // Cancel any outgoing refetches to avoid overwriting optimistic updates
+      await queryClient.cancelQueries({ queryKey: ["own-posts"] });
+
+      // Snapshot the previous value
+      const previousPosts = queryClient.getQueryData<Task[]>(["own-posts"]);
+
+      // Optimistically update to the new value
+      queryClient.setQueryData<Task[]>(["own-posts"], (oldPosts = []) =>
+        oldPosts.map((post) =>
+          post._id === newPostData.postId
+            ? { ...post, ...newPostData.updatedData }
+            : post,
+        ),
+      );
+
+      // Return a context object with the snapshotted value
+      return { previousPosts };
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["own-posts"] });
       queryClient.invalidateQueries({ queryKey: ["post", selectedPost?._id] });
       toast.success("Post updated successfully!");
       setIsEditDialogOpen(false);
     },
-    onError: (error) => {
+    onError: (error, variables, context) => {
+      // Rollback to the previous value if the mutation fails
+      if (context?.previousPosts) {
+        queryClient.setQueryData(["own-posts"], context.previousPosts);
+      }
       toast.error(`Error: ${error.message}`);
+    },
+    onSettled: () => {
+      // Ensure that the query is refetched after the mutation is settled
+      queryClient.invalidateQueries({ queryKey: ["own-posts"] });
     },
   });
 
@@ -142,6 +170,12 @@ const MyPost = () => {
     queryKey: ["own-posts"],
     queryFn: getOwnPosts,
   });
+
+  React.useEffect(() => {
+    if (ownPost) {
+      setOwnPosts(ownPost);
+    }
+  }, [ownPost]);
 
   const { data: postDetails } = useQuery<Task>({
     queryKey: ["post", selectedPost?._id],
