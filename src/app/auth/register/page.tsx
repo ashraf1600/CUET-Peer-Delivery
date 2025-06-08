@@ -4,9 +4,11 @@ import { Container } from "@/components/shared/Container";
 
 const page = () => {
   return (
-    <Container>
+    <div>
+      {/* <Container> */}
       <Register />
-    </Container>
+      {/* </Container> */}
+    </div>
   );
 };
 

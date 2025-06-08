@@ -54,13 +54,15 @@ export default function LoginPage() {
     <div className="flex min-h-screen">
       {/* Left side with image */}
       <div className="hidden w-1/2 items-center justify-center bg-gray-100 lg:flex">
-        <Image
-          src={leftImg}
-          alt="Login Visual"
-          width={600}
-          height={600}
-          className="object-fit h-full w-full"
-        />
+        <div className="relative h-full w-full">
+          <Image
+            src={leftImg}
+            alt="Login Visual"
+            fill
+            style={{ objectFit: "cover" }}
+            priority
+          />
+        </div>
       </div>
 
       {/* Right side with login form */}
