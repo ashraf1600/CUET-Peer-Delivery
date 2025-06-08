@@ -101,7 +101,7 @@ const Navbar = () => {
         <div className="hidden items-center lg:flex">
           {session && (
             <Link href="/create-post" className="mr-4">
-              <Button className="text-baseWhite cursor-pointer bg-blue-400">
+              <Button className="text-baseWhite cursor-pointer bg-blue-400 hover:bg-blue-600 hover:text-white">
                 Create Post
               </Button>
             </Link>
