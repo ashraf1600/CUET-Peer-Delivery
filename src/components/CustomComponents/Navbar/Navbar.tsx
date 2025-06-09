@@ -116,19 +116,19 @@ const Navbar = () => {
             )}
 
             {!session ? (
-              <>
+              <div className="flex items-center gap-2">
                 <Link
                   href="/auth/login"
-                  className="px-4 py-3 text-sm leading-5 font-medium text-black transition-colors hover:bg-gray-50"
+                  className="rounded-lg bg-blue-500 px-4 py-2 text-sm leading-5 font-medium text-white transition-colors hover:bg-blue-600"
                 >
                   Login
                 </Link>
                 <Link href="/auth/register">
-                  <Button className="bg-Primary-500 text-baseWhite cursor-pointer">
+                  <Button className="bg-Primary-500 cursor-pointer bg-blue-500 text-white hover:bg-blue-600">
                     Register
                   </Button>
                 </Link>
-              </>
+              </div>
             ) : (
               <DropdownMenu>
                 <DropdownMenuTrigger className="cursor-pointer">
