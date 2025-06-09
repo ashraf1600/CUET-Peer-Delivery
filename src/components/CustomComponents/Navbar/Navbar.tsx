@@ -35,70 +35,68 @@ const Navbar = () => {
     {
       id: "1",
       href: "/",
-      label: "navItems.1",
+      label: "navitems.1",
       fallback: "Home",
-      simpleLink: true,
+      simplelink: true,
     },
     {
       id: "2",
       href: "/about",
-      label: "navItems.2",
+      label: "navitems.2",
       fallback: "About",
-      simpleLink: true,
+      simplelink: true,
     },
     {
       id: "3",
       href: "/contact",
-      label: "navItems.3",
+      label: "navitems.3",
       fallback: "Contact",
-      simpleLink: true,
+      simplelink: true,
     },
     {
       id: "4",
       href: "/post",
-      label: "navItems.4",
+      label: "navitems.4",
       fallback: "All Posts",
-      simpleLink: true,
+      simplelink: true,
     },
   ];
 
   const getInitials = (name: string) => {
     const names = name.split(" ");
-    let initials = names[0].substring(0, 1).toUpperCase();
-    if (names.length > 1) {
-      initials += names[names.length - 1].substring(0, 1).toUpperCase();
-    }
-    return initials;
+    return names[0][0].toUpperCase() + (names[1]?.[0]?.toUpperCase() || "");
   };
 
   return (
-    <div className="sticky top-0 z-50 w-full bg-gray-100 shadow-sm">
-      <Container className="pt-4">
+    <header className="sticky top-0 z-50 w-full bg-white shadow-md">
+      <Container className="py-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Link href="/" className="flex items-center">
-              <Image
-                src="https://img.freepik.com/free-vector/bird-colorful-gradient-design-vector_343694-2506.jpg?semt=ais_hybrid&w=740"
-                alt="BAJP Logo"
-                width={50}
-                height={50}
-                unoptimized
-              />
-            </Link>
-            <span className="font-bold text-blue-500">
-              <span className="text-amber-700">CUET</span>{" "}
-              <span className="text-blue-500">Peer Delivery</span>
+          {/* Logo + Branding */}
+          <Link href="/" className="flex items-center space-x-2">
+            <Image
+              src="/images/logo.jpg"
+              alt="Logo"
+              width={45}
+              height={45}
+              className="rounded-full border"
+              unoptimized
+            />
+            <span className="text-xl font-semibold text-gray-800">
+              <span className="text-amber-600">CUET</span>{" "}
+              <span className="text-blue-600">Peer Delivery</span>
             </span>
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden flex-grow items-center justify-center lg:flex">
+          <nav className="hidden items-center space-x-6 lg:flex">
             {navItems.map((item) => (
               <Link
                 key={item.id}
-                href={item.href!}
-                className={`hover:text-Primary-300 text-md mx-4 leading-5 font-medium text-blue-500 transition-colors ${
-                  isActiveLink(item.href!) ? "text-black" : "text-black"
+                href={item.href}
+                className={`text-base font-medium transition hover:text-blue-600 ${
+                  isActiveLink(item.href)
+                    ? "font-semibold text-blue-700"
+                    : "text-gray-700"
                 }`}
               >
                 {item.fallback}
@@ -106,106 +104,99 @@ const Navbar = () => {
             ))}
           </nav>
 
-          <div className="hidden items-center lg:flex">
-            {session && (
-              <Link href="/create-post" className="mr-4">
-                <Button className="text-baseWhite cursor-pointer bg-blue-400 hover:bg-blue-600 hover:text-white">
-                  Create Post
-                </Button>
-              </Link>
-            )}
+          {/* Right Side - Buttons / User */}
+          <div className="hidden items-center space-x-3 lg:flex">
+            {session ? (
+              <>
+                <Link href="/create-post">
+                  <Button className="cursor-pointer bg-blue-500 text-white hover:bg-blue-600">
+                    Create Post
+                  </Button>
+                </Link>
 
-            {!session ? (
-              <div className="flex items-center gap-2">
-                <Link
-                  href="/auth/login"
-                  className="rounded-lg bg-blue-500 px-4 py-2 text-sm leading-5 font-medium text-white transition-colors hover:bg-blue-600"
-                >
-                  Login
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="outline-none">
+                    <Avatar className="cursor-pointer border border-blue-500">
+                      <AvatarImage />
+                      <AvatarFallback className="bg-blue-500 text-white">
+                        {getInitials(session?.user?.name || "U")}
+                      </AvatarFallback>
+                    </Avatar>
+                  </DropdownMenuTrigger>
+
+                  <DropdownMenuContent className="mt-2 w-56 shadow-xl">
+                    <div className="px-3 py-2 text-sm">
+                      <p>
+                        <span className="font-semibold">Name:</span>{" "}
+                        {session?.user?.name}
+                      </p>
+                      <p>
+                        <span className="font-semibold">Email:</span>{" "}
+                        {session?.user?.email}
+                      </p>
+                      <p>
+                        <span className="font-semibold">Role:</span>{" "}
+                        {session?.user?.role}
+                      </p>
+                    </div>
+                    <hr />
+                    <DropdownMenuItem
+                      className="cursor-pointer"
+                      onClick={() => router.push("/profile")}
+                    >
+                      Profile
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => router.push("/my-posts")}
+                      className="cursor-pointer"
+                    >
+                      My Posts
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => router.push("/my-orders")}
+                      className="cursor-pointer"
+                    >
+                      My Orders
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => signOut({ redirect: true })}
+                      className="cursor-pointer font-medium text-red-500"
+                    >
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            ) : (
+              <>
+                <Link href="/auth/login">
+                  <Button variant="outline" className="text-blue-600">
+                    Login
+                  </Button>
                 </Link>
                 <Link href="/auth/register">
-                  <Button className="bg-Primary-500 cursor-pointer bg-blue-500 text-white hover:bg-blue-600">
+                  <Button className="bg-blue-600 text-white hover:bg-blue-700">
                     Register
                   </Button>
                 </Link>
-              </div>
-            ) : (
-              <DropdownMenu>
-                <DropdownMenuTrigger className="cursor-pointer">
-                  <Avatar className="border border-black">
-                    <AvatarImage />
-                    <AvatarFallback className="bg-blue-400">
-                      {getInitials(session?.user?.name || "User")}
-                    </AvatarFallback>
-                  </Avatar>
-                </DropdownMenuTrigger>
-
-                <DropdownMenuContent>
-                  <DropdownMenuItem className="grid cursor-pointer items-center justify-center">
-                    <span>
-                      {" "}
-                      <span className="font-bold">Name:</span>{" "}
-                      {session?.user?.name || "Name"}
-                    </span>
-                    <span>
-                      <span className="font-bold">Email:</span>{" "}
-                      {session?.user?.email || "email"}
-                    </span>
-                    <span>
-                      <span className="font-bold">Role:</span>{" "}
-                      {session?.user?.role || "role"}
-                    </span>
-                  </DropdownMenuItem>
-                  <hr className="py-2" />
-                  <DropdownMenuItem
-                    className="cursor-pointer"
-                    onClick={() => router.push("/profile")}
-                  >
-                    Profile
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem
-                    onClick={() => router.push("/my-posts")}
-                    className="cursor-pointer"
-                  >
-                    My Posts
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => router.push("/my-orders")}
-                    className="cursor-pointer"
-                  >
-                    My Orders
-                  </DropdownMenuItem>
-                  {/* <DropdownMenuItem
-                    onClick={() => router.push("/settings")}
-                    className="cursor-pointer"
-                  >
-                    Settings
-                  </DropdownMenuItem> */}
-                  <DropdownMenuItem
-                    onClick={() => signOut({ redirect: true })}
-                    className="cursor-pointer"
-                  >
-                    Logout
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              </>
             )}
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Toggle Button */}
           <div className="lg:hidden">
             <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
-              <RiMenu4Fill size={24} className="text-colors-navbarText" />
+              <RiMenu4Fill size={24} />
             </Button>
           </div>
         </div>
       </Container>
-      {/* Mobile Navigation Menu */}
+
+      {/* Mobile Navigation */}
       {isMobileMenuOpen && (
         <MobileMenu
           isOpen={isMobileMenuOpen}
@@ -215,7 +206,7 @@ const Navbar = () => {
           isActiveLink={isActiveLink}
         />
       )}
-    </div>
+    </header>
   );
 };
 

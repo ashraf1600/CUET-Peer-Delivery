@@ -1,6 +1,7 @@
 "use client";
 
 import Navbar from "@/components/CustomComponents/Navbar/Navbar";
+import Footer from "@/components/Footer";
 import { Poppins } from "next/font/google";
 import React from "react";
 import { Toaster } from "react-hot-toast";
@@ -19,6 +20,7 @@ export default function LayoutProvider({
       <main className={`mx-auto min-h-screen ${poppins.className}`}>
         {children}
       </main>
+      <Footer />
     </>
   );
 }
