@@ -117,11 +117,11 @@ const PostDetails: React.FC<PostDetailsProps> = ({ postId, accessToken }) => {
         </div>
       </div>
 
-      <div className="mt-4 flex w-full max-w-6xl gap-4">
-        <div className="w-1/2">
+      <div className="mt-4 flex w-full max-w-6xl gap-8">
+        <div className="w-2/3">
           <CommentSection postId={postId} />
         </div>
-        <div className="w-1/2">
+        <div className="w-1/3">
           <Messenger />
         </div>
       </div>

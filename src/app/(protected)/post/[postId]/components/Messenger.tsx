@@ -81,7 +81,10 @@ const Messenger: React.FC = () => {
             placeholder="Type a message..."
             className="flex-grow"
           />
-          <Button type="submit" className="w-fit">
+          <Button
+            type="submit"
+            className="w-fit bg-blue-500 text-white hover:bg-blue-600"
+          >
             Send
           </Button>
         </div>
