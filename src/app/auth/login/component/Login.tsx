@@ -24,7 +24,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -36,11 +35,15 @@ export default function LoginPage() {
       const result = await signIn("credentials", {
         email,
         password,
+        redirect: false,
         callbackUrl: "/post",
       });
 
       if (result?.error) {
         setError(result.error);
+      } else {
+        // Redirect to the callbackUrl if there's no error
+        window.location.href = "/post";
       }
     } catch (err) {
       console.error("SignIn error:", err);
