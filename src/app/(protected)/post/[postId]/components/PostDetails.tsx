@@ -7,6 +7,7 @@ import { get, put } from "@/lib/api/handlers";
 import CommentSection from "./CommentSection";
 import PostCard from "../../components/PostCard";
 import { Button } from "@/components/ui/button";
+import Messenger from "./Messenger";
 
 interface UserId {
   _id: string;
@@ -116,8 +117,13 @@ const PostDetails: React.FC<PostDetailsProps> = ({ postId, accessToken }) => {
         </div>
       </div>
 
-      <div className="mt-4 w-full max-w-6xl">
-        <CommentSection postId={postId} />
+      <div className="mt-4 flex w-full max-w-6xl gap-4">
+        <div className="w-1/2">
+          <CommentSection postId={postId} />
+        </div>
+        <div className="w-1/2">
+          <Messenger />
+        </div>
       </div>
     </div>
   );
