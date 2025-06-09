@@ -2,7 +2,7 @@ import { Container } from "@/components/shared/Container";
 import React from "react";
 import MyAllOrders from "./MyAllOrders";
 
-const MyOrders = () => {
+const MyOrdersWrapper = () => {
   return (
     <div>
       <Container>
@@ -12,4 +12,4 @@ const MyOrders = () => {
   );
 };
 
-export default MyOrders;
+export default MyOrdersWrapper;

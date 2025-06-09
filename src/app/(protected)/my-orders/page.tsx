@@ -1,10 +1,10 @@
 import React from "react";
-import MyOrders from "./components/MyOrders";
+import MyOrdersWrapper from "./components/MyOrdersWrapper";
 
 const page = () => {
   return (
     <div>
-      <MyOrders />
+      <MyOrdersWrapper />
     </div>
   );
 };

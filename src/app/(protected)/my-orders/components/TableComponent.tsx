@@ -5,9 +5,7 @@ import {
   flexRender,
   ColumnDef,
 } from "@tanstack/react-table";
-import { FaEye, FaEdit, FaTrash, FaMoneyBillWave } from "react-icons/fa";
-import PaymentDialog from "./PaymentDialog";
-import { Button } from "@/components/ui/button";
+import { FaEye } from "react-icons/fa";
 
 interface UserId {
   _id: string;
@@ -118,11 +116,6 @@ const TableComponent: React.FC<TableComponentProps> = ({ data, onView }) => {
           ))}
         </tbody>
       </table>
-      <PaymentDialog
-        isOpen={isPaymentDialogOpen}
-        onOpenChange={setIsPaymentDialogOpen}
-        postId={selectedPostId}
-      />
     </div>
   );
 };

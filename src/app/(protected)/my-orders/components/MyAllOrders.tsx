@@ -6,7 +6,6 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import TableComponent from "./TableComponent";
-import toast from "react-hot-toast";
 import {
   Sheet,
   SheetContent,
