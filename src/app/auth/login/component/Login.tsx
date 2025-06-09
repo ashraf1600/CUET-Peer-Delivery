@@ -36,7 +36,7 @@ export default function LoginPage() {
       const result = await signIn("credentials", {
         email,
         password,
-        callbackUrl: "/",
+        callbackUrl: "/post",
       });
 
       if (result?.error) {

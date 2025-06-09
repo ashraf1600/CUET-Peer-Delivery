@@ -36,7 +36,7 @@ import { getToken } from "next-auth/jwt";
 export async function middleware(request: NextRequest) {
   const token = await getToken({ req: request });
 
-  const publicRoutes = ["/auth/login", "/auth/register"];
+  const publicRoutes = ["/auth/login", "/auth/register", "/"];
 
   // Check if the user is trying to access a protected route
   if (!token && !publicRoutes.includes(request.nextUrl.pathname)) {

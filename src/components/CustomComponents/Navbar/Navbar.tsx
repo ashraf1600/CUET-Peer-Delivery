@@ -53,6 +53,13 @@ const Navbar = () => {
       fallback: "Contact",
       simpleLink: true,
     },
+    {
+      id: "4",
+      href: "/post",
+      label: "navItems.4",
+      fallback: "All Posts",
+      simpleLink: true,
+    },
   ];
 
   const getInitials = (name: string) => {
