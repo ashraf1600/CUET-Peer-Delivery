@@ -117,7 +117,7 @@ const PostDetails: React.FC<PostDetailsProps> = ({ postId, accessToken }) => {
       </div>
 
       <div className="mt-4 w-full max-w-6xl">
-        <CommentSection postId={postId} accessToken={accessToken} />
+        <CommentSection postId={postId} />
       </div>
     </div>
   );
