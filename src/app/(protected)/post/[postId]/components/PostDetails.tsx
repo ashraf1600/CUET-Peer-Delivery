@@ -85,6 +85,8 @@ const PostDetails: React.FC<PostDetailsProps> = ({ postId, accessToken }) => {
   if (error) return <div>Error: {error.message}</div>;
   if (!post) return <div>No post found</div>;
 
+  const isPostOpen = post.status === "Open";
+
   return (
     <div className="flex flex-col items-center p-4">
       <div className="flex w-full max-w-6xl">
@@ -107,13 +109,15 @@ const PostDetails: React.FC<PostDetailsProps> = ({ postId, accessToken }) => {
               {new Date(post.createdAt).toLocaleString()}
             </span>
           </p>
-          <Button
-            onClick={() => handleStatusUpdate("Accepted")}
-            disabled={requestSent}
-            className="mt-4 cursor-pointer rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-500"
-          >
-            {requestSent ? " Accepted" : "Accept"}
-          </Button>
+          {isPostOpen && (
+            <Button
+              onClick={() => handleStatusUpdate("Accepted")}
+              disabled={requestSent}
+              className="mt-4 cursor-pointer rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-500"
+            >
+              {requestSent ? "Accepted" : "Accept"}
+            </Button>
+          )}
         </div>
       </div>
 
