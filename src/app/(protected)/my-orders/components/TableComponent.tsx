@@ -1,11 +1,4 @@
-import React, { useState } from "react";
-import {
-  useReactTable,
-  getCoreRowModel,
-  flexRender,
-  ColumnDef,
-} from "@tanstack/react-table";
-import { FaEye } from "react-icons/fa";
+import React from "react";
 
 interface UserId {
   _id: string;
@@ -31,91 +24,34 @@ interface TableComponentProps {
 }
 
 const TableComponent: React.FC<TableComponentProps> = ({ data, onView }) => {
-  const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
-  const [selectedPostId, setSelectedPostId] = useState("");
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+      {data.map((task) => (
+        <div
+          key={task._id}
+          className="bg-white shadow-lg rounded-2xl p-5 border border-gray-200 transition hover:shadow-xl"
+        >
+          <div className="flex justify-between items-start mb-3">
+            <h3 className="text-lg font-semibold text-gray-800">{task.title}</h3>
+          </div>
 
-  const handlePaymentClick = (postId: string) => {
-    setSelectedPostId(postId);
-    setIsPaymentDialogOpen(true);
-  };
-  const columns: ColumnDef<Task>[] = [
-    {
-      accessorKey: "_id",
-      header: "ID",
-    },
-    {
-      accessorKey: "title",
-      header: "Title",
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-    },
-    {
-      accessorKey: "userId.name",
-      header: "Post By",
-      cell: (info) => info.getValue() || "Unknown",
-    },
-    {
-      accessorKey: "createdAt",
-      header: "Created At",
-      cell: (info) => new Date(info.getValue() as string).toLocaleString(),
-    },
+          <div className="text-sm text-gray-600 space-y-1 mb-4">
+            <p><span className="font-medium">Status:</span> {task.status}</p>
+            <p><span className="font-medium">Posted By:</span> {task.userId?.name || "Unknown"}</p>
+            <p>
+              <span className="font-medium">Created:</span>{" "}
+              {new Date(task.createdAt).toLocaleString()}
+            </p>
+          </div>
 
-    {
-      id: "actions",
-      header: "Actions",
-      cell: ({ row }) => (
-        <div className="flex space-x-2">
           <button
-            onClick={() => onView(row.original)}
-            className="cursor-pointer text-blue-500 hover:text-blue-700"
+            onClick={() => onView(task)}
+            className="text-sm text-blue-600 font-medium hover:underline hover:text-blue-800 transition"
           >
-            <FaEye />
+            See More
           </button>
         </div>
-      ),
-    },
-  ];
-
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
-
-  return (
-    <div className="p-2">
-      <table className="w-full border-collapse">
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id} className="bg-gray-100">
-              {headerGroup.headers.map((header) => (
-                <th
-                  key={header.id}
-                  className="border p-2 text-left font-semibold"
-                >
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className="hover:bg-gray-50">
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className="border p-2">
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      ))}
     </div>
   );
 };

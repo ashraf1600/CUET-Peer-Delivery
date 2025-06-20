@@ -1,10 +1,12 @@
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import React, { useEffect, useState } from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
 import { RiMenu4Fill } from "react-icons/ri";
 import { signOut, useSession } from "next-auth/react";
+import { Bell } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,15 +14,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { Container } from "@/components/shared/Container";
 import MobileMenu from "./MobileMenu";
-
-export type Language = "en" | "bn";
 
 const Navbar = () => {
   const { data: session } = useSession();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [notifications, setNotifications] = useState([
+    { id: 1, message: "New message from user1" },
+    { id: 2, message: "Your post was liked" },
+    { id: 3, message: "New comment on your post" },
+  ]);
 
   const pathname = usePathname();
   const router = useRouter();
@@ -29,74 +35,50 @@ const Navbar = () => {
     setIsClient(true);
   }, []);
 
-  const isActiveLink = (href: string) => pathname === href;
+  const isActiveLink = (href) => pathname === href;
 
   const navItems = [
-    {
-      id: "1",
-      href: "/",
-      label: "navitems.1",
-      fallback: "Home",
-      simplelink: true,
-    },
-    {
-      id: "2",
-      href: "/about",
-      label: "navitems.2",
-      fallback: "About",
-      simplelink: true,
-    },
-    {
-      id: "3",
-      href: "/contact",
-      label: "navitems.3",
-      fallback: "Contact",
-      simplelink: true,
-    },
-    {
-      id: "4",
-      href: "/post",
-      label: "navitems.4",
-      fallback: "All Posts",
-      simplelink: true,
-    },
+    { id: "1", href: "/", fallback: "Home" },
+    { id: "2", href: "/about", fallback: "About" },
+    { id: "3", href: "/contact", fallback: "Contact" },
+    { id: "4", href: "/post", fallback: "All Posts" },
   ];
 
-  const getInitials = (name: string) => {
+  const getInitials = (name) => {
     const names = name.split(" ");
     return names[0][0].toUpperCase() + (names[1]?.[0]?.toUpperCase() || "");
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white shadow-md">
-      <Container className="py-3">
+    <header className="sticky top-0 z-50 w-full bg-white shadow-sm">
+      <Container className="py-4">
         <div className="flex items-center justify-between">
-          {/* Logo + Branding */}
+          {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <Image
-              src="/images/logo.jpg"
+              src="/images/logo(2).png"
               alt="Logo"
-              width={45}
-              height={45}
-              className="rounded-full border"
+              width={50}
+              height={50}
+              className="rounded-full border border-blue-500"
               unoptimized
             />
-            <span className="text-xl font-semibold text-gray-800">
-              <span className="text-amber-600">CUET</span>{" "}
-              <span className="text-blue-600">Peer Delivery</span>
+            <span className="text-3xl font-extrabold tracking-wide bg-gradient-to-r from-blue-700 via-blue-500 to-cyan-400 text-transparent bg-clip-text drop-shadow-lg select-none">
+              <span className="mr-1">CUET</span>
+              <span className="font-semibold text-gray-900">Peer Delivery</span>
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden items-center space-x-6 lg:flex">
+          {/* Desktop Nav */}
+          <nav className="hidden lg:flex items-center space-x-8">
             {navItems.map((item) => (
               <Link
                 key={item.id}
                 href={item.href}
-                className={`text-base font-medium transition hover:text-blue-600 ${
+                className={`text-lg font-medium transition-colors duration-300 ${
                   isActiveLink(item.href)
-                    ? "font-semibold text-blue-700"
-                    : "text-gray-700"
+                    ? "text-blue-700 font-semibold"
+                    : "text-gray-600 hover:text-blue-600"
                 }`}
               >
                 {item.fallback}
@@ -104,63 +86,77 @@ const Navbar = () => {
             ))}
           </nav>
 
-          {/* Right Side - Buttons / User */}
-          <div className="hidden items-center space-x-3 lg:flex">
+          {/* Right Side Buttons */}
+          <div className="hidden lg:flex items-center space-x-4">
             {session ? (
               <>
                 <Link href="/create-post">
-                  <Button className="cursor-pointer bg-blue-500 text-white hover:bg-blue-600">
+                  <Button className="bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 shadow-lg transform hover:scale-105 transition-transform duration-300">
                     Create Post
                   </Button>
                 </Link>
 
+                {/* Notification Icon with Dropdown */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative p-2">
+                      <Bell className="h-6 w-6 text-gray-600" />
+                      {notifications.length > 0 && (
+                        <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">
+                          {notifications.length}
+                        </span>
+                      )}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-64">
+                    {notifications.length > 0 ? (
+                      notifications.map((notification) => (
+                        <DropdownMenuItem key={notification.id} className="cursor-pointer">
+                          {notification.message}
+                        </DropdownMenuItem>
+                      ))
+                    ) : (
+                      <DropdownMenuItem className="cursor-pointer">
+                        No new notifications
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
                 <DropdownMenu>
                   <DropdownMenuTrigger className="outline-none">
-                    <Avatar className="cursor-pointer border border-blue-500">
-                      <AvatarImage />
+                    <Avatar className="border-2 border-blue-500 cursor-pointer hover:scale-105 transition-transform duration-300">
+                      <AvatarImage src={session?.user?.image || undefined} />
                       <AvatarFallback className="bg-blue-500 text-white">
                         {getInitials(session?.user?.name || "U")}
                       </AvatarFallback>
                     </Avatar>
                   </DropdownMenuTrigger>
-
-                  <DropdownMenuContent className="mt-2 w-56 shadow-xl">
-                    <div className="px-3 py-2 text-sm">
+                  <DropdownMenuContent className="mt-2 w-56 shadow-lg border border-blue-100 rounded-lg">
+                    <div className="px-4 py-3 text-sm text-gray-800">
                       <p>
-                        <span className="font-semibold">Name:</span>{" "}
-                        {session?.user?.name}
+                        <strong>Name:</strong> {session?.user?.name}
                       </p>
                       <p>
-                        <span className="font-semibold">Email:</span>{" "}
-                        {session?.user?.email}
+                        <strong>Email:</strong> {session?.user?.email}
                       </p>
                       <p>
-                        <span className="font-semibold">Role:</span>{" "}
-                        {session?.user?.role}
+                        <strong>Role:</strong> {session?.user?.role}
                       </p>
                     </div>
-                    <hr />
-                    <DropdownMenuItem
-                      className="cursor-pointer"
-                      onClick={() => router.push("/profile")}
-                    >
+                    <hr className="border-blue-200" />
+                    <DropdownMenuItem onClick={() => router.push("/profile")} className="hover:bg-blue-50 cursor-pointer">
                       Profile
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => router.push("/my-posts")}
-                      className="cursor-pointer"
-                    >
+                    <DropdownMenuItem onClick={() => router.push("/my-posts")} className="hover:bg-blue-50 cursor-pointer">
                       My Posts
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => router.push("/my-orders")}
-                      className="cursor-pointer"
-                    >
+                    <DropdownMenuItem onClick={() => router.push("/my-orders")} className="hover:bg-blue-50 cursor-pointer">
                       My Orders
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => signOut({ redirect: true })}
-                      className="cursor-pointer font-medium text-red-500"
+                      className="text-red-500 font-semibold hover:bg-red-50 cursor-pointer"
                     >
                       Logout
                     </DropdownMenuItem>
@@ -170,12 +166,12 @@ const Navbar = () => {
             ) : (
               <>
                 <Link href="/auth/login">
-                  <Button variant="outline" className="text-blue-600">
+                  <Button variant="outline" className="text-blue-600 border-blue-600 hover:bg-blue-50 transform hover:scale-105 transition-transform duration-300">
                     Login
                   </Button>
                 </Link>
                 <Link href="/auth/register">
-                  <Button className="bg-blue-600 text-white hover:bg-blue-700">
+                  <Button className="bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 shadow-lg transform hover:scale-105 transition-transform duration-300">
                     Register
                   </Button>
                 </Link>
@@ -183,20 +179,16 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Mobile Toggle Button */}
+          {/* Mobile Toggle */}
           <div className="lg:hidden">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
+            <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
               <RiMenu4Fill size={24} />
             </Button>
           </div>
         </div>
       </Container>
 
-      {/* Mobile Navigation */}
+      {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <MobileMenu
           isOpen={isMobileMenuOpen}

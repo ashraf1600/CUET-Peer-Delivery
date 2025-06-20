@@ -5,6 +5,7 @@ import { get } from "@/lib/api/handlers";
 import { useQuery } from "@tanstack/react-query";
 import PostCard from "./PostCard";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 interface UserId {
   _id: string;
@@ -44,23 +45,43 @@ const AllPost = () => {
     queryFn: GetAllPost,
   });
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  if (isLoading) return <div className="text-center py-10">Loading posts...</div>;
+  if (error) return <div className="text-center py-10 text-red-500">Error: {error.message}</div>;
 
-  console.log("all post", posts);
+  // Sort posts by creation date in descending order
+  const sortedPosts = [...posts].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
   return (
-    <div className="py-10">
-      <span className="mb-4 flex items-center justify-center text-2xl font-bold">
-        All Posts
-      </span>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {posts?.map((post) => (
-          <Link key={post._id} href={`/post/${post._id}`} passHref>
-            <div className="cursor-pointer">
-              <PostCard post={post} />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Create Your Own Post Banner */}
+        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-lg shadow-lg mb-8">
+          <div className="flex flex-col items-center justify-center text-center">
+            <h2 className="text-2xl font-bold mb-2">Create Your Own Post</h2>
+            <p className="mb-4">
+              Share your needs...
+            </p>
+            <Link href="/create-post">
+              <Button className="bg-white text-blue-600 hover:bg-gray-100 font-bold py-2 px-4 rounded">
+                Create Post
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-extrabold text-gray-900">Community Feed</h1>
+        </div>
+
+        <div className="space-y-6">
+          {sortedPosts?.map((post) => (
+            <div key={post._id} className="bg-white rounded-lg shadow-sm p-6 hover:shadow-lg transition-shadow duration-300">
+              <Link href={`/post/${post._id}`} passHref>
+                <PostCard post={post} />
+              </Link>
             </div>
-          </Link>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -5,9 +5,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { get, put } from "@/lib/api/handlers";
 
 import CommentSection from "./CommentSection";
-import PostCard from "../../components/PostCard";
-import { Button } from "@/components/ui/button";
 import Messenger from "./Messenger";
+import { Button } from "@/components/ui/button";
 
 interface UserId {
   _id: string;
@@ -54,7 +53,7 @@ const PostDetails: React.FC<PostDetailsProps> = ({ postId, accessToken }) => {
       { status: newStatus },
       {
         Authorization: `Bearer ${accessToken}`,
-      },
+      }
     );
   };
 
@@ -81,52 +80,79 @@ const PostDetails: React.FC<PostDetailsProps> = ({ postId, accessToken }) => {
     enabled: !!postId,
   });
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
-  if (!post) return <div>No post found</div>;
+  if (isLoading) return <div className="text-center py-10">Loading...</div>;
+  if (error) return <div className="text-red-600 text-center py-10">Error: {error.message}</div>;
+  if (!post) return <div className="text-center py-10">No post found</div>;
 
   const isPostOpen = post.status === "Open";
 
   return (
-    <div className="flex flex-col items-center p-4">
-      <div className="flex w-full max-w-6xl">
-        <div className="w-2/4 p-4">
-          <img
-            src="/fallBackImage.jpg"
-            alt="Fallback"
-            className="w-full rounded-lg"
-          />
-        </div>
-        <div className="w-2/3 p-4">
-          <h1 className="mb-4 text-2xl font-bold">{post.title}</h1>
-          <p className="mb-2 text-gray-700">{post.description}</p>
-          <p className="mb-1 text-sm text-gray-500">
-            Created by: <span className="font-medium">{post.userId.name}</span>
-          </p>
-          <p className="mb-1 text-sm text-gray-500">
-            Created at:{" "}
-            <span className="font-medium">
-              {new Date(post.createdAt).toLocaleString()}
+    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Post Header */}
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-gray-900">{post.title}</h1>
+          <div className="flex items-center mt-2 text-sm text-gray-500">
+            <span>Posted by {post.userId.name}</span>
+            <span className="mx-2">•</span>
+            <span>{new Date(post.createdAt).toLocaleString()}</span>
+            <span className="mx-2">•</span>
+            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+              post.status === "Open" ? "bg-green-100 text-green-800" : "bg-blue-100 text-blue-800"
+            }`}>
+              {post.status}
             </span>
-          </p>
-          {isPostOpen && (
-            <Button
-              onClick={() => handleStatusUpdate("Accepted")}
-              disabled={requestSent}
-              className="mt-4 cursor-pointer rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-500"
-            >
-              {requestSent ? "Accepted" : "Accept"}
-            </Button>
-          )}
+          </div>
         </div>
-      </div>
 
-      <div className="mt-4 flex w-full max-w-6xl gap-8">
-        <div className="w-2/3">
-          <CommentSection postId={postId} />
-        </div>
-        <div className="w-1/3">
-          <Messenger />
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Main Content */}
+          <div className="flex-1">
+            {/* Post Content */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+              <div className="flex flex-col md:flex-row gap-6">
+                {/* Image */}
+                <div className="w-full md:w-1/2">
+                  <img
+                    src="/fallBackImage.jpg"
+                    alt="Fallback"
+                    className="w-full h-64 sm:h-80 object-cover rounded-lg"
+                  />
+                </div>
+
+                {/* Description */}
+                <div className="w-full md:w-1/2">
+                  <p className="text-black-700 whitespace-pre-line">{post.description}</p>
+                  
+                  {isPostOpen && (
+                    <div className="mt-6">
+                      <Button
+                        onClick={() => handleStatusUpdate("Accepted")}
+                        disabled={requestSent}
+                        className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
+                      >
+                        {requestSent ? "Request Accepted" : "Accept Request"}
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Comments Section */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              {/* <h2 className="text-xl font-semibold text-gray-800 mb-4">Comments</h2> */}
+              <CommentSection postId={postId} />
+            </div>
+          </div>
+
+          {/* Messenger Sidebar */}
+          <div className="lg:w-80 xl:w-96">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky top-6">
+              {/* <h2 className="text-xl font-semibold text-gray-800 mb-4">Messenger</h2> */}
+              <Messenger />
+            </div>
+          </div>
         </div>
       </div>
     </div>

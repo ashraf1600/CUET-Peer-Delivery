@@ -152,13 +152,13 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId }) => {
             </div>
           ))
         ) : (
-          <p className="text-blue-500">No comments yet.</p>
+          <p className="text-blue-800">No comments yet.</p>
         )}
       </div>
       <div className="py-10">
         <form onSubmit={handleSubmit} className="">
           <div className="flex flex-col space-y-2">
-            <Label htmlFor="comment" className="text-blue-500">
+            <Label htmlFor="comment" className="text-blue-800">
               Add a comment
             </Label>
             <textarea

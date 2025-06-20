@@ -10,7 +10,7 @@ const Page: React.FC = () => {
           {/* Left Text Section */}
           <div className="max-w-xl">
             <h1 className="text-5xl leading-tight font-extrabold tracking-tight text-gray-900">
-              CUET PEER Delivery
+              CUET Peer Delivery
             </h1>
             <p className="text-black-700 mt-5 text-lg leading-relaxed font-semibold">
               Empowering students to deliver, share, and support each other

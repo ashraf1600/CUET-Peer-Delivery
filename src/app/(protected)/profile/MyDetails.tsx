@@ -5,6 +5,8 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { get } from "@/lib/api/handlers";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Pencil } from "lucide-react";
 
 interface UserProfile {
   _id: string;
@@ -41,29 +43,52 @@ const MyDetails = () => {
     queryFn: fetchUserProfile,
   });
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  if (isLoading) return <div className="text-blue-600 font-medium">Loading...</div>;
+  if (error) return <div className="text-red-600">Error: {error.message}</div>;
+
+  const initials =
+    userProfile?.name
+      .split(" ")
+      .map((n) => n[0])
+      .join("") || "";
 
   return (
-    <div className="flex flex-col items-center justify-center p-4">
-      <div className="mb-4">
-        <Avatar className="h-24 w-24">
+    <div className="max-w-xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-md border border-blue-100">
+      <div className="flex flex-col items-center space-y-4 mb-6">
+        <Avatar className="h-24 w-24 ring-4 ring-blue-500 ring-opacity-30">
           <AvatarImage src="/path/to/avatar.jpg" alt="Profile Picture" />
-          <AvatarFallback>
-            {userProfile?.name
-              .split(" ")
-              .map((n) => n[0])
-              .join("")}
+          <AvatarFallback className="text-xl font-semibold text-blue-800">
+            {initials}
           </AvatarFallback>
         </Avatar>
+        <h1 className="text-2xl font-bold text-blue-800">{userProfile?.name}</h1>
+        <p className="text-gray-500 italic">{userProfile?.description || "No bio provided."}</p>
       </div>
-      <div className="text-start">
-        <p className="my-4 text-gray-800">Bio: {userProfile?.description}</p>
-        <h1 className="text-xl font-bold">Name: {userProfile?.name}</h1>
-        <p className="text-gray-600">Email: {userProfile?.email}</p>
-        <p className="text-gray-600">Student ID: {userProfile?.stdId}</p>
-        <p className="text-gray-600">Hall: {userProfile?.hallName}</p>
-        <p className="text-gray-600">Role: {userProfile?.role}</p>
+
+      <div className="space-y-2 text-sm text-gray-700">
+        <p>
+          <span className="font-semibold text-blue-700">Email:</span>{" "}
+          {userProfile?.email}
+        </p>
+        <p>
+          <span className="font-semibold text-blue-700">Student ID:</span>{" "}
+          {userProfile?.stdId}
+        </p>
+        <p>
+          <span className="font-semibold text-blue-700">Hall:</span>{" "}
+          {userProfile?.hallName}
+        </p>
+        <p>
+          <span className="font-semibold text-blue-700">Role:</span>{" "}
+          {userProfile?.role}
+        </p>
+      </div>
+
+      <div className="mt-6 text-center">
+        <Button className="bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white font-semibold px-6 py-2 rounded-md shadow-sm hover:shadow-md transition-all">
+          <Pencil className="h-4 w-4 mr-2" />
+          Update Profile
+        </Button>
       </div>
     </div>
   );

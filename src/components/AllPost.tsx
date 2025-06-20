@@ -49,7 +49,7 @@ const AllPost = () => {
   console.log("all post", posts);
   return (
     <div>
-      <h1 className="mb-4 text-2xl font-bold">All Posts</h1>
+      <h1 className="mb-4 text-2xl font-bold">All Post</h1>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {posts?.map((post) => <PostCard key={post._id} post={post} />)}
       </div>
